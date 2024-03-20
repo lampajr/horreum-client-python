@@ -1,0 +1,33 @@
+# This workflow will run the full CI for the Horreum python library including the build and the tests execution
+# This is going to be triggered on every pull request as well as on main branch.
+# TODO: trigger tests once implemented
+name: Python client ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.session }} ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: [ "3.9", "3.10", "3.11" ]
+    env:
+      FORCE_COLOR: "1"
+      PRE_COMMIT_COLOR: "always"
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install development dependencies
+        run: pip install -r dev-requirements.txt
+      - name: Build python library
+        run: poetry build
