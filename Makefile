@@ -28,6 +28,7 @@ endif
 KIOTA_VERSION ?= "v1.12.0"
 HORREUM_BRANCH ?= "master"
 HORREUM_OPENAPI_PATH ?= "https://raw.githubusercontent.com/Hyperfoil/Horreum/${HORREUM_BRANCH}/docs/site/content/en/openapi/openapi.yaml"
+GENERATED_CLIENT_PATH = "${PROJECT_PATH}/src/horreum/raw_client"
 
 .PHONY: help
 help: ## Display this help.
@@ -37,7 +38,7 @@ help: ## Display this help.
 
 .PHONY: clean
 clean: ## Clean external tools and output dirs
-	rm -rf ${PROJECT_BIN} ${PROJECT_DIST}
+	@rm -rf ${PROJECT_BIN} ${PROJECT_DIST} ${GENERATED_CLIENT_PATH}/api ${GENERATED_CLIENT_PATH}/models ${GENERATED_CLIENT_PATH}/horreum_raw_client.py ${GENERATED_CLIENT_PATH}/kiota-lock.json
 
 .PHONY: kiota
 kiota: ${PROJECT_BIN}/kiota ## Install kiota tool under ${PROJECT_PATH}/bin
@@ -62,5 +63,5 @@ generate: tools ## Generate the Horreum client
 	@{\
 		set -e ;\
 		curl -sSfL -o ${PROJECT_PATH}/openapi/openapi.yaml ${HORREUM_OPENAPI_PATH} ;\
-		${PROJECT_BIN}/kiota generate -l python -c HorreumRawClient -n raw_client -d ${PROJECT_PATH}/openapi/openapi.yaml -o ${PROJECT_PATH}/src/horreum/raw_client ;\
+		${PROJECT_BIN}/kiota generate -l python -c HorreumRawClient -n raw_client -d ${PROJECT_PATH}/openapi/openapi.yaml -o ${GENERATED_CLIENT_PATH} ;\
 	}

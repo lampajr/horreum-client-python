@@ -5,6 +5,9 @@ description = "Horreum python library"
 authors = ["Andrea Lamparelli <alampare@redhat.com>"]
 license = "Apache 2.0"
 readme = "README.md"
+include = [
+    "src/horreum/raw_client/**/*", # all files in "src/horreum/raw_client" and any subfolders
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
