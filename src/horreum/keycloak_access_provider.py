@@ -27,4 +27,4 @@ class KeycloakAccessProvider(AccessTokenProvider):
         return self.keycloak_openid.token(username=self.username, password=self.password)["access_token"]
 
     def get_allowed_hosts_validator(self) -> AllowedHostsValidator:
-        pass
+        return AllowedHostsValidator(allowed_hosts=[])

@@ -4,9 +4,6 @@ PROJECT_PATH := $(patsubst %/,%,$(dir $(MKFILE_PATH)))
 PROJECT_BIN := $(PROJECT_PATH)/bin
 PROJECT_DIST := $(PROJECT_PATH)/dist
 
-# add tools bin directory
-PATH := $(PROJECT_BIN):$(PATH)
-
 OS_NAME := $(shell uname -s | tr A-Z a-z)
 OS_ARCH := $(shell uname -m | tr A-Z a-z)
 

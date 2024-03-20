@@ -42,10 +42,12 @@ class HorreumClient:
         Set up the authentication provider, based on the Horreum configuration, and the low-level horreum api client
         """
 
-        if self.__username is not None and self.__password is not None:
+        if self.__username is not None:
             # Bearer token authentication
             access_provider = await setup_auth_provider(self.__base_url, self.__username, self.__password)
             self.auth_provider = BaseBearerTokenAuthenticationProvider(access_provider)
+        elif self.__password is not None:
+            raise RuntimeError("providing password without username, have you missed something?")
         else:
             # Anonymous authentication
             self.auth_provider = AnonymousAuthenticationProvider()

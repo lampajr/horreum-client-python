@@ -40,7 +40,6 @@ async def authenticated_client() -> HorreumClient:
         await client.raw_client.api.config.version.get()
     except httpx.ConnectError:
         pytest.fail("Unable to fetch Horreum version, is Horreum running in the background?")
-
     return client
 
 
@@ -70,6 +69,15 @@ async def test_check_auth_token(authenticated_client: HorreumClient):
     await authenticated_client.auth_provider.authenticate_request(req)
     assert len(req.headers.get(BaseBearerTokenAuthenticationProvider.AUTHORIZATION_HEADER)) == 1
     assert req.headers.get(BaseBearerTokenAuthenticationProvider.AUTHORIZATION_HEADER).pop().startswith("Bearer")
+
+
+@pytest.mark.asyncio
+async def test_missing_username_with_password():
+    try:
+        await new_horreum_client(base_url="http://localhost:8080", password=password)
+        pytest.fail("expect RuntimeError here")
+    except RuntimeError as e:
+        assert str(e) == "providing password without username, have you missed something?"
 
 
 @pytest.mark.asyncio
