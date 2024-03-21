@@ -18,7 +18,7 @@ Horreum python client is a high-level python library to interact with [Horreum](
 The raw client is generated using [kiota](https://github.com/microsoft/kiota) openapi generator tool starting from 
 the [Horreum OpenAPI spec](https://github.com/Hyperfoil/Horreum/blob/master/docs/site/content/en/openapi/openapi.yaml).
 
-Refer to the [get started guide](./GET_STARTED.md) for comprehensive instructions on installing and utilizing this library.
+Refer to the [get started guide](docs/GET_STARTED.md) for comprehensive instructions on installing and utilizing this library.
 
 ## What is Horreum?
 
@@ -44,7 +44,7 @@ Contributions to `horreum-client-python` Please check our [CONTRIBUTING.md](./CO
 
 Install all dev dependencies (consider using Python virtual environments):
 ```bash
-pip install -r dev-requirements.txt
+pip install -r dev-constraints.txt
 ```
 
 Generate source files

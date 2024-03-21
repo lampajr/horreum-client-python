@@ -36,9 +36,13 @@ help: ## Display this help.
 
 ##@ Development
 
+.PHONY: clean-bin
+clean-bin: ## Clean external tools
+	@rm -rf ${PROJECT_BIN}
+
 .PHONY: clean
 clean: ## Clean external tools and output dirs
-	@rm -rf ${PROJECT_BIN} ${PROJECT_DIST} ${GENERATED_CLIENT_PATH}/api ${GENERATED_CLIENT_PATH}/models ${GENERATED_CLIENT_PATH}/horreum_raw_client.py ${GENERATED_CLIENT_PATH}/kiota-lock.json
+	@rm -rf ${PROJECT_DIST} ${GENERATED_CLIENT_PATH}/api ${GENERATED_CLIENT_PATH}/models ${GENERATED_CLIENT_PATH}/horreum_raw_client.py ${GENERATED_CLIENT_PATH}/kiota-lock.json
 
 .PHONY: kiota
 kiota: ${PROJECT_BIN}/kiota ## Install kiota tool under ${PROJECT_PATH}/bin

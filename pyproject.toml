@@ -2,12 +2,18 @@
 name = "horreum"
 version = "0.13-dev"
 description = "Horreum python library"
+keywords = ["horreum", "performance", "change-detection"]
 authors = ["Andrea Lamparelli <alampare@redhat.com>"]
+maintainers = ["Andrea Lamparelli <alampare@redhat.com>"]
 license = "Apache 2.0"
 readme = "README.md"
+homepage = "https://github.com/Hyperfoil/horreum-client-python"
 include = [
-    "src/horreum/raw_client/**/*", # all files in "src/horreum/raw_client" and any subfolders
+    "src/horreum/raw_client/**/*", # this folder includes auto-generated client
 ]
+
+[tool.poetry.urls]
+"Issues" = "https://github.com/Hyperfoil/horreum-client-python/issues"
 
 [tool.poetry.dependencies]
 python = "^3.10"

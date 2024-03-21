@@ -1,4 +1,4 @@
-# This workflow will build the python distribution and it will publish to Pypi
+# This workflow will build the python distribution, and it will publish to Pypi
 # This is going to be triggered on on every tag `v*`, e.g., `v0.13`.
 # TODO: trigger tests once implemented, to ensure everything is working before publishing
 name: Publish Horreum library
@@ -7,11 +7,14 @@ on:
   push:
     tags:
       - v*
+  workflow_dispatch:
 
 jobs:
-  test:
+  publish:
     name: ${{ matrix.session }} ${{ matrix.python }}
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     env:
       FORCE_COLOR: "1"
     steps:
@@ -21,8 +24,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-      - name: Install development dependencies
-        run: pip install -r dev-requirements.txt
+      - name: Install poetry
+        run: |
+          pipx install --pip-args=--constraint=./dev-constraints.txt poetry
+          poetry --version
       - name: Check version coherence
         run: |
           PROJECT_VERSION=$(poetry version | cut -d' ' -f2)
