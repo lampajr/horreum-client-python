@@ -47,6 +47,11 @@ Install all dev dependencies (consider using Python virtual environments):
 pip install -r dev-requirements.txt
 ```
 
+Generate source files
+```bash
+make generate
+```
+
 Build the library using `poetry`:
 ```bash
 poetry build
