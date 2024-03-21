@@ -1,0 +1,12 @@
+# IDE configs
+.idea
+
+# Dist
+dist/
+bin/
+
+# Py cache
+**/__pycache__
+
+# Kiota
+**/.kiota.log

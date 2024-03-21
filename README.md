@@ -11,7 +11,16 @@
 </div>
 
 ---
-## What is Horreum ?
+## What is Horreum Python Client?
+
+Horreum python client is a high-level python library to interact with [Horreum](#what-is-horreum) web server.
+
+The raw client is generated using [kiota](https://github.com/microsoft/kiota) openapi generator tool starting from 
+the [Horreum OpenAPI spec](https://github.com/Hyperfoil/Horreum/blob/master/docs/site/content/en/openapi/openapi.yaml).
+
+Refer to the [get started guide](./GET_STARTED.md) for comprehensive instructions on installing and utilizing this library.
+
+## What is Horreum?
 
 [Horreum](https://github.com/Hyperfoil/Horreum) is a service for storing performance data and regression analysis.
 
@@ -22,7 +31,7 @@ Please, visit our project website:
 for more information.
 
 [Horreum](https://github.com/Hyperfoil/Horreum) is a [Quarkus](https://quarkus.io/) based application which uses
-[Quinoa](https://quarkiverse.github.io/quarkiverse-docs/quarkus-quinoa/dev/) as its [nodejs](https://nodejs.org/en) engine.
+[Quinoa](https://quarkiverse.github.io/quarkiverse-docs/quarkus-quinoa/dev/) as its [Node.js](https://nodejs.org/en) engine.
 
 This project is about providing a simplified setup and examples to use 
 [Horreum](https://github.com/Hyperfoil/Horreum) using the [Python](https://www.python.org/) programming language.
@@ -30,6 +39,35 @@ This project is about providing a simplified setup and examples to use
 ## 🧑‍💻 Contributing
 
 Contributions to `horreum-client-python` Please check our [CONTRIBUTING.md](./CONTRIBUTING.md)
+
+### Development
+
+Install all dev dependencies (consider using Python virtual environments):
+```bash
+pip install -r dev-requirements.txt
+```
+
+Generate source files
+```bash
+make generate
+```
+
+Build the library using `poetry`:
+```bash
+poetry build
+```
+
+#### Tests
+
+Right now tests are not automated, therefore you need to start up the Horreum server manually, 
+you can check more details in [Horreum README](https://github.com/Hyperfoil/Horreum/blob/master/README.md#getting-started-with-development-server).
+
+> **_NOTE_**: The database should be empty to get all tests working
+
+Once the Horreum server is up and running on `localhost:8080`, you can trigger integration tests by running:
+```bash
+pytest test/
+```
 
 ### If you have any idea or doubt 👇
 

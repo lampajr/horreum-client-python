@@ -1,0 +1,41 @@
+# This workflow will build the python distribution and it will publish to Pypi
+# This is going to be triggered on on every tag `v*`, e.g., `v0.13`.
+# TODO: trigger tests once implemented, to ensure everything is working before publishing
+name: Publish Horreum library
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  test:
+    name: ${{ matrix.session }} ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: "1"
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install development dependencies
+        run: pip install -r dev-requirements.txt
+      - name: Check version coherence
+        run: |
+          PROJECT_VERSION=$(poetry version | cut -d' ' -f2)
+          GIT_TAG=$(git describe --tags --match="v*")
+          if [[ "${GIT_TAG:1}" =~ $PROJECT_VERSION ]]; then
+            echo "::error title='$GIT_TAG tag does not match project version'::"
+            exit 1
+          fi
+      - name: Build python library
+        run: make generate && poetry build --ansi
+      - name: Publish package on PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          verbose: true
+          print-hash: true
+          packages-dir: ./dist/
