@@ -10,3 +10,6 @@ bin/
 
 # Kiota
 **/.kiota.log
+
+# Openapi
+openapi/openapi.yaml

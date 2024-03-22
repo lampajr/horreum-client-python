@@ -1,0 +1,58 @@
+# This workflow will fetch the new openapi from the provided branch of https://github.com/Hyperfoil/Horreum and based on
+# that it will re-generate the Horreum raw client and check the build/tests are still working.
+# It could be tested running `gh act workflow_dispatch -e ./test/workflow_dispatch_event_example.json`. Remember to
+# comment out the pull request creation :)
+name: Update Horreum auto-generated client
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch or tag of https://github.com/Hyperfoil/Horreum
+        required: true
+  # this event should be triggered by Horreum repo using peter-evans/repository-dispatch@v2
+  repository_dispatch:
+    types: [ detected-horreum-openapi-change ]
+
+jobs:
+  check-openapi-change:
+    # TODO: find a way to set name including the branch we are checking
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Horreum branch
+        id: fetch-horreum-branch
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "horreum_branch=${{ github.event.client_payload.branch }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "horreum_branch=${{ github.event.inputs.branch }}" >> $GITHUB_OUTPUT
+          else
+            echo "Unknown event: ${{ github.event_name }}"
+            exit 1
+          fi
+      - name: Fetch client branch
+        id: fetch-client-branch
+        run: |
+          if [ "${{ steps.fetch-horreum-branch.outputs.horreum_branch }}" = "master" ]; then
+            echo "horreum_client_branch=main" >> $GITHUB_OUTPUT
+          else
+            echo "horreum_client_branch=${{ steps.fetch-horreum-branch.outputs.horreum_branch }}" >> $GITHUB_OUTPUT
+          fi
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.fetch-client-branch.outputs.horreum_client_branch }}
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Generate horreum client
+        run: make HORREUM_BRANCH=${{ steps.fetch-horreum-branch.outputs.horreum_branch }} generate
+      - name: Install poetry
+        run: |
+          pipx install --pip-args=--constraint=./dev-constraints.txt poetry
+          poetry --version
+      - name: Build python library
+        run: poetry build
+      - name: Test horreum library
+        run: pytest test/horreum_client_test.py

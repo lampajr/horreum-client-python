@@ -11,7 +11,7 @@ on:
 
 jobs:
   publish:
-    name: ${{ matrix.session }} ${{ matrix.python }}
+    name: Publish horreum package
     runs-on: ubuntu-latest
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
@@ -37,6 +37,7 @@ jobs:
             exit 1
           fi
       - name: Build python library
+        # HORREUM_BRANCH must be properly set to the Horreum branch you want to fetch the openapi
         run: make generate && poetry build --ansi
       - name: Publish package on PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

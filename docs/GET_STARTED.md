@@ -21,6 +21,12 @@ pip install -r dev-constraints.txt
 Once all dependencies are installed simply build the `whl` by running:
 
 ```bash
+make generate
+```
+
+to generate source files and
+
+```bash
 poetry build
 ```
 
