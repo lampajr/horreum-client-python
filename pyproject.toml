@@ -4,7 +4,11 @@ version = "0.13-dev"
 description = "Horreum python library"
 keywords = ["horreum", "performance", "change-detection"]
 authors = ["Andrea Lamparelli <alampare@redhat.com>"]
-maintainers = ["Andrea Lamparelli <alampare@redhat.com>"]
+maintainers = [
+    "Andrea Lamparelli <alampare@redhat.com>",
+    "John O'Hara <johara@redhat.com>",
+    "Stale Pedersen <spederse@redhat.com>"
+]
 license = "Apache 2.0"
 readme = "README.md"
 homepage = "https://github.com/Hyperfoil/horreum-client-python"
