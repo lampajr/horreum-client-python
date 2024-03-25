@@ -1,7 +1,6 @@
 # This workflow will fetch the new openapi from the provided branch of https://github.com/Hyperfoil/Horreum and based on
 # that it will re-generate the Horreum raw client and check the build/tests are still working.
-# It could be tested running `gh act workflow_dispatch -e ./test/workflow_dispatch_event_example.json`. Remember to
-# comment out the pull request creation :)
+# It could be tested running `gh act workflow_dispatch -e ./test/workflow_dispatch_event_example.json`.
 name: Update Horreum auto-generated client
 
 on:
@@ -18,6 +17,13 @@ jobs:
   check-openapi-change:
     # TODO: find a way to set name including the branch we are checking
     runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: "1"
+      PRE_COMMIT_COLOR: "always"
+    strategy:
+      fail-fast: false
+      matrix:
+        python: [ "3.9", "3.10", "3.11" ]
     steps:
       - name: Fetch Horreum branch
         id: fetch-horreum-branch
@@ -45,14 +51,20 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
-      - name: Generate horreum client
-        run: make HORREUM_BRANCH=${{ steps.fetch-horreum-branch.outputs.horreum_branch }} generate
+          python-version: ${{ matrix.python }}
+      - name: Upgrade pip
+        run: |
+          pip install --constraint=./dev-constraints.txt pip
+          pip --version
       - name: Install poetry
         run: |
-          pipx install --pip-args=--constraint=./dev-constraints.txt poetry
+          pip install --constraint=./dev-constraints.txt poetry
           poetry --version
-      - name: Build python library
-        run: poetry build
-      - name: Test horreum library
-        run: pytest test/horreum_client_test.py
+      - name: Install Nox
+        run: |
+          pip install --constraint=./dev-constraints.txt nox nox-poetry
+          nox --version
+      - name: Generate horreum client
+        run: make HORREUM_BRANCH=${{ steps.fetch-horreum-branch.outputs.horreum_branch }} generate
+      - name: Test horreum
+        run: nox --python=${{ matrix.python }} -s tests

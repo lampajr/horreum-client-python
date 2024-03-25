@@ -17,17 +17,10 @@ jobs:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     env:
       FORCE_COLOR: "1"
+      PY_VERSION: "3.10"
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Install poetry
-        run: |
-          pipx install --pip-args=--constraint=./dev-constraints.txt poetry
-          poetry --version
       - name: Check version coherence
         run: |
           PROJECT_VERSION=$(poetry version | cut -d' ' -f2)
@@ -36,9 +29,29 @@ jobs:
             echo "::error title='$GIT_TAG tag does not match project version'::"
             exit 1
           fi
-      - name: Build python library
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PY_VERSION }}
+      - name: Upgrade pip
+        run: |
+          pip install --constraint=./dev-constraints.txt pip
+          pip --version
+      - name: Install poetry
+        run: |
+          pip install --constraint=./dev-constraints.txt poetry
+          poetry --version
+      - name: Install Nox
+        run: |
+          pip install --constraint=./dev-constraints.txt nox nox-poetry
+          nox --version
+      - name: Generate horreum client
         # HORREUM_BRANCH must be properly set to the Horreum branch you want to fetch the openapi
-        run: make generate && poetry build --ansi
+        run: make generate
+      - name: Test horreum
+        run: nox --python=${{ env.PY_VERSION }} -s tests
+      - name: Build python library
+        run: poetry build --ansi
       - name: Publish package on PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
