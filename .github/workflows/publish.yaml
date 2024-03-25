@@ -1,6 +1,5 @@
 # This workflow will build the python distribution, and it will publish to Pypi
-# This is going to be triggered on on every tag `v*`, e.g., `v0.13`.
-# TODO: trigger tests once implemented, to ensure everything is working before publishing
+# This is going to be triggered on every tag `v*`, e.g., `v0.13`.
 name: Publish Horreum library
 
 on:

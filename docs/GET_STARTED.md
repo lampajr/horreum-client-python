@@ -1,12 +1,13 @@
 <div align="center">
 
-# Get Started Guide
+# Getting Started
 
 </div>
 
 In this document you can find all information to get started using the Horreum python library from scratch.
 
-Right now the library is not published anywhere, therefore the only way to install it is from source.
+> **NOTE**: At the moment of writing, the `horreum` package is not yet accessible on PyPI. Consequently, the sole method 
+> for installation involves constructing it from source and subsequently installing the generated `wheel`.
 
 ---
 ## Prerequisites

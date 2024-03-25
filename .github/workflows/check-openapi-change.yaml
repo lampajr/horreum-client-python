@@ -1,6 +1,6 @@
 # This workflow will fetch the new openapi from the provided branch of https://github.com/Hyperfoil/Horreum and based on
 # that it will re-generate the Horreum raw client and check the build/tests are still working.
-# It could be tested running `gh act workflow_dispatch -e ./test/workflow_dispatch_event_example.json`.
+# It could be tested running `gh act workflow_dispatch -e ./test/gha_workflows/workflow_dispatch_event_example.json`.
 name: Update Horreum auto-generated client
 
 on:
