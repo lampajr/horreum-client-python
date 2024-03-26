@@ -12,20 +12,23 @@ In this document you can find all information to get started using the Horreum p
 ---
 ## Prerequisites
 
-* Python environment, e.g., `pyenv` or `miniconda` with all development dependencies installed:
+* Python environment, e.g., `pyenv` or `miniconda` with `poetry` dependency installed:
 ```bash
-pip install -r dev-constraints.txt
+pip install --constraint=./dev-constraints.txt poetry
+poetry --version
 ```
 
 ## Installation
 
-Once all dependencies are installed simply build the `whl` by running:
+Once all [prerequisites](#prerequisites) are satisfied, run the following commands.
+
+First of all, generate the Horreum client: 
 
 ```bash
 make generate
 ```
 
-to generate source files and
+Then, simply build the _wheel_ by running:
 
 ```bash
 poetry build

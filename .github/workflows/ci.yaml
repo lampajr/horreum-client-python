@@ -1,5 +1,5 @@
 # This workflow will run the full CI for the Horreum python library including the build and the tests execution
-# This is going to be triggered on every pull request as well as on main branch.
+# This is going to be triggered on every pull request as well as on all stable branches (e.g., main and 0.12.x).
 name: Python client ci
 
 on:

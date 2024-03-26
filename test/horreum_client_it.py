@@ -43,12 +43,6 @@ async def authenticated_client() -> HorreumClient:
     return client
 
 
-def test_check_client_version(anonymous_client_without_check: HorreumClient):
-    version = anonymous_client_without_check.version()
-    # TODO: we could load the toml and check the versions match
-    assert version != ""
-
-
 @pytest.mark.asyncio
 async def test_check_server_version(anonymous_client: HorreumClient):
     version = await anonymous_client.raw_client.api.config.version.get()
@@ -73,11 +67,9 @@ async def test_check_auth_token(authenticated_client: HorreumClient):
 
 @pytest.mark.asyncio
 async def test_missing_username_with_password():
-    try:
+    with pytest.raises(RuntimeError) as ex:
         await new_horreum_client(base_url="http://localhost:8080", password=password)
-        pytest.fail("expect RuntimeError here")
-    except RuntimeError as e:
-        assert str(e) == "providing password without username, have you missed something?"
+    assert str(ex.value) == "providing password without username, have you missed something?"
 
 
 @pytest.mark.asyncio

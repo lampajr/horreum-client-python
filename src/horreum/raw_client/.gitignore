@@ -1,5 +1,0 @@
-# Ignore everything, this dir will contain generated code
-*
-
-# Keep this file versioned
-!__init__.py

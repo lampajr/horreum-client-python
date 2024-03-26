@@ -42,9 +42,10 @@ Contributions to `horreum-client-python` Please check our [CONTRIBUTING.md](./CO
 
 ### Development
 
-Install all dev dependencies (consider using Python virtual environments):
+Install poetry dependency (consider using Python virtual environments):
 ```bash
-pip install -r dev-constraints.txt
+pip install --constraint=./dev-constraints.txt poetry
+poetry --version
 ```
 
 Generate source files
@@ -58,15 +59,32 @@ poetry build
 ```
 
 #### Tests
+Tests can be executed using [nox](https://nox.thea.codes/en/stable/) sessions.
 
-Right now tests are not automated, therefore you need to start up the Horreum server manually, 
+To install it in your local environment, please run:
+```bash
+pip install --constraint=./dev-constraints.txt nox nox-poetry
+nox --version
+```
+
+To check available sessions, run:
+```bash
+nox -l
+```
+
+And execute them by running:
+```bash
+nox -s [session]
+```
+
+Right now integrations tests are not fully automated, therefore you need to start up the Horreum server manually, 
 you can check more details in [Horreum README](https://github.com/Hyperfoil/Horreum/blob/master/README.md#getting-started-with-development-server).
 
 > **_NOTE_**: The database should be empty to get all tests working
 
 Once the Horreum server is up and running on `localhost:8080`, you can trigger integration tests by running:
 ```bash
-pytest test/
+nox -s its
 ```
 
 ### If you have any idea or doubt 👇

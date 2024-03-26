@@ -9,7 +9,7 @@ versioning scheme to keep coherence among all Horreum-related projects versions.
 
 ### Tag a new version
 
-Checkout to your branch, either a `stable` (e.g., `0.12.x`) or the `main` one.
+Checkout to your branch, either a "stable" (e.g., `0.12.x`) or the `main` one.
 
 ```bash
 git checkout origin/main
@@ -25,7 +25,7 @@ This will bump your version, from `0.12-dev` to `0.12`.
 
 To double-check the version, run:
 ```bash
-poetry version                                                                                                                                                      [15:55:39]
+poetry version
 # horreum 0.12
 ```
 
@@ -49,14 +49,12 @@ from _stable_ rather than from `main`.
 
 ### Create stable branch
 
-> **NOTE**: If the _stable_ branch is already existing simply skip this step at all as this means 
-> you already did the following steps.
+> **NOTE**: If the _stable_ branch already exists, simply skip this step, as this means the following steps have already been done.
 
 To create a _stable_ branch from the `main` one, e.g., `0.12.x`, run the following commands.
 
 ```bash
-git checkout origin/main
-git checkout -b 0.12.x
+git checkout origin/main -b 0.12.x
 git checkout origin/main
 ```
 

@@ -8,7 +8,7 @@ from kiota_abstractions.authentication.base_bearer_token_authentication_provider
 from kiota_http.httpx_request_adapter import HttpxRequestAdapter
 
 from .keycloak_access_provider import KeycloakAccessProvider
-from .raw_client import HorreumRawClient
+from .raw_client.horreum_raw_client import HorreumRawClient
 
 
 async def setup_auth_provider(base_url: str, username: str, password: str) -> AccessTokenProvider:

@@ -13,3 +13,6 @@ bin/
 
 # Openapi
 openapi/openapi.yaml
+
+# Generate code
+src/horreum/raw_client/**
