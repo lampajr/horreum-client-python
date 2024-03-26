@@ -15,7 +15,7 @@ on:
 
 jobs:
   check-openapi-change:
-    name: check-openapi-change-${{ github.event.client_payload.branch }}
+    name: check-openapi-change ${{ github.event.client_payload.branch }}
     runs-on: ubuntu-latest
     env:
       FORCE_COLOR: "1"

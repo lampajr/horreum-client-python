@@ -73,8 +73,8 @@ nox -l
 ```
 
 And execute them by running:
-```bash
-nox -s [session]
+```
+nox -s <session>
 ```
 
 Right now integrations tests are not fully automated, therefore you need to start up the Horreum server manually, 

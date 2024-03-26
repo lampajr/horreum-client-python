@@ -30,6 +30,7 @@ HORREUM_BRANCH ?= "master"
 HORREUM_OPENAPI_PATH ?= "https://raw.githubusercontent.com/Hyperfoil/Horreum/${HORREUM_BRANCH}/docs/site/content/en/openapi/openapi.yaml"
 GENERATED_CLIENT_PATH = "${PROJECT_PATH}/src/horreum/raw_client"
 OPENAPI_PATH = "${PROJECT_PATH}/openapi"
+OPENAPI_SPEC = "${OPENAPI_PATH}/openapi.yaml"
 
 .PHONY: help
 help: ## Display this help.
@@ -63,11 +64,17 @@ ${PROJECT_BIN}/kiota:
 .PHONY: tools
 tools: kiota ## Install external tools.
 
-.PHONY: generate
-generate: tools ## Generate the Horreum client
+${OPENAPI_SPEC}:
 	@{\
 		set -e ;\
 		mkdir -p ${OPENAPI_PATH} ;\
-		curl -sSfL -o ${OPENAPI_PATH}/openapi.yaml ${HORREUM_OPENAPI_PATH} ;\
+		echo "fetching openapi spec from ${HORREUM_OPENAPI_PATH}" ;\
+		curl -sSfL -o ${OPENAPI_SPEC} ${HORREUM_OPENAPI_PATH} ;\
+	}
+
+.PHONY: generate
+generate: tools ${OPENAPI_SPEC} ## Generate the Horreum client
+	@{\
+		set -e ;\
 		${PROJECT_BIN}/kiota generate -l python -c HorreumRawClient -n raw_client -d ${OPENAPI_PATH}/openapi.yaml -o ${GENERATED_CLIENT_PATH} ;\
 	}
