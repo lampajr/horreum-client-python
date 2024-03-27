@@ -10,3 +10,9 @@ bin/
 
 # Kiota
 **/.kiota.log
+
+# Openapi
+openapi/openapi.yaml
+
+# Generated code
+src/horreum/raw_client/**

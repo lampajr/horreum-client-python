@@ -1,28 +1,25 @@
-# This workflow will build the python distribution and it will publish to Pypi
-# This is going to be triggered on on every tag `v*`, e.g., `v0.13`.
-# TODO: trigger tests once implemented, to ensure everything is working before publishing
+# This workflow will build the python distribution, and it will publish to Pypi
+# This is going to be triggered on every tag `v*`, e.g., `v0.13`.
 name: Publish Horreum library
 
 on:
   push:
     tags:
       - v*
+  workflow_dispatch:
 
 jobs:
-  test:
-    name: ${{ matrix.session }} ${{ matrix.python }}
+  publish:
+    name: Publish horreum package
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     env:
       FORCE_COLOR: "1"
+      PY_VERSION: "3.10"
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Install development dependencies
-        run: pip install -r dev-requirements.txt
       - name: Check version coherence
         run: |
           PROJECT_VERSION=$(poetry version | cut -d' ' -f2)
@@ -31,8 +28,29 @@ jobs:
             echo "::error title='$GIT_TAG tag does not match project version'::"
             exit 1
           fi
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PY_VERSION }}
+      - name: Upgrade pip
+        run: |
+          pip install --constraint=./dev-constraints.txt pip
+          pip --version
+      - name: Install poetry
+        run: |
+          pip install --constraint=./dev-constraints.txt poetry
+          poetry --version
+      - name: Install Nox
+        run: |
+          pip install --constraint=./dev-constraints.txt nox nox-poetry
+          nox --version
+      - name: Generate horreum client
+        # HORREUM_BRANCH must be properly set to the Horreum branch you want to fetch the openapi
+        run: make generate
+      - name: Test horreum
+        run: nox --python=${{ env.PY_VERSION }} -s tests
       - name: Build python library
-        run: make generate && poetry build --ansi
+        run: poetry build --ansi
       - name: Publish package on PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:

@@ -1,3 +1,5 @@
+from importlib.metadata import version
+
 from kiota_abstractions.authentication import AuthenticationProvider
 from kiota_abstractions.authentication.access_token_provider import AccessTokenProvider
 from kiota_abstractions.authentication.anonymous_authentication_provider import AnonymousAuthenticationProvider
@@ -6,9 +8,7 @@ from kiota_abstractions.authentication.base_bearer_token_authentication_provider
 from kiota_http.httpx_request_adapter import HttpxRequestAdapter
 
 from .keycloak_access_provider import KeycloakAccessProvider
-from .raw_client import HorreumRawClient
-
-from .service import info_service as info
+from .raw_client.horreum_raw_client import HorreumRawClient
 
 
 async def setup_auth_provider(base_url: str, username: str, password: str) -> AccessTokenProvider:
@@ -61,8 +61,9 @@ class HorreumClient:
     # High-level API #
     ##################
 
-    def version(self) -> str:
-        return info.get_client_version()
+    @staticmethod
+    def version() -> str:
+        return version("horreum")
 
 
 async def new_horreum_client(base_url: str, username: str = None, password: str = None) -> HorreumClient:

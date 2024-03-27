@@ -1,0 +1,70 @@
+# This workflow will fetch the new openapi from the provided branch of https://github.com/Hyperfoil/Horreum and based on
+# that it will re-generate the Horreum raw client and check the build/tests are still working.
+# It could be tested running `gh act workflow_dispatch -e ./test/gha_workflows/workflow_dispatch_event_example.json`.
+name: Update Horreum auto-generated client
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch or tag of https://github.com/Hyperfoil/Horreum
+        required: true
+  # this event should be triggered by Horreum repo using peter-evans/repository-dispatch@v2
+  repository_dispatch:
+    types: [ detected-horreum-openapi-change ]
+
+jobs:
+  check-openapi-change:
+    name: check-openapi-change ${{ github.event.client_payload.branch }}
+    runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: "1"
+      PRE_COMMIT_COLOR: "always"
+    strategy:
+      fail-fast: false
+      matrix:
+        python: [ "3.9", "3.10", "3.11" ]
+    steps:
+      - name: Fetch Horreum branch
+        id: fetch-horreum-branch
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "horreum_branch=${{ github.event.client_payload.branch }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "horreum_branch=${{ github.event.inputs.branch }}" >> $GITHUB_OUTPUT
+          else
+            echo "Unknown event: ${{ github.event_name }}"
+            exit 1
+          fi
+      - name: Fetch client branch
+        id: fetch-client-branch
+        run: |
+          if [ "${{ steps.fetch-horreum-branch.outputs.horreum_branch }}" = "master" ]; then
+            echo "horreum_client_branch=main" >> $GITHUB_OUTPUT
+          else
+            echo "horreum_client_branch=${{ steps.fetch-horreum-branch.outputs.horreum_branch }}" >> $GITHUB_OUTPUT
+          fi
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.fetch-client-branch.outputs.horreum_client_branch }}
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Upgrade pip
+        run: |
+          pip install --constraint=./dev-constraints.txt pip
+          pip --version
+      - name: Install poetry
+        run: |
+          pip install --constraint=./dev-constraints.txt poetry
+          poetry --version
+      - name: Install Nox
+        run: |
+          pip install --constraint=./dev-constraints.txt nox nox-poetry
+          nox --version
+      - name: Generate horreum client
+        run: make HORREUM_BRANCH=${{ steps.fetch-horreum-branch.outputs.horreum_branch }} generate
+      - name: Test horreum
+        run: nox --python=${{ matrix.python }} -s tests

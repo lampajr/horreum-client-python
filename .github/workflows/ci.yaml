@@ -1,17 +1,17 @@
 # This workflow will run the full CI for the Horreum python library including the build and the tests execution
-# This is going to be triggered on every pull request as well as on main branch.
-# TODO: trigger tests once implemented
+# This is going to be triggered on every pull request as well as on all stable branches (e.g., main and 0.12.x).
 name: Python client ci
 
 on:
   push:
     branches:
       - main
+      - 0.12.x
   pull_request:
 
 jobs:
   test:
-    name: ${{ matrix.session }} ${{ matrix.python }}
+    name: test/${{ matrix.python }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -27,7 +27,19 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-      - name: Install development dependencies
-        run: pip install -r dev-requirements.txt
-      - name: Build python library
-        run: poetry build
+      - name: Upgrade pip
+        run: |
+          pip install --constraint=./dev-constraints.txt pip
+          pip --version
+      - name: Install poetry
+        run: |
+          pip install --constraint=./dev-constraints.txt poetry
+          poetry --version
+      - name: Install Nox
+        run: |
+          pip install --constraint=./dev-constraints.txt nox nox-poetry
+          nox --version
+      - name: Generate horreum client
+        run: make generate
+      - name: Test horreum
+        run: nox --python=${{ matrix.python }} -s tests
