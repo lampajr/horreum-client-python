@@ -20,14 +20,6 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
-      - name: Check version coherence
-        run: |
-          PROJECT_VERSION=$(poetry version | cut -d' ' -f2)
-          GIT_TAG=$(git describe --tags --match="v*")
-          if [[ "${GIT_TAG:1}" =~ $PROJECT_VERSION ]]; then
-            echo "::error title='$GIT_TAG tag does not match project version'::"
-            exit 1
-          fi
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -44,6 +36,14 @@ jobs:
         run: |
           pip install --constraint=./dev-constraints.txt nox nox-poetry
           nox --version
+      - name: Check version coherence
+        run: |
+          PROJECT_VERSION=$(poetry version | cut -d' ' -f2)
+          GIT_TAG=$(git describe --tags --match="v*")
+          if [[ "${GIT_TAG:1}" =~ $PROJECT_VERSION ]]; then
+            echo "::error title='$GIT_TAG tag does not match project version'::"
+            exit 1
+          fi
       - name: Generate horreum client
         # HORREUM_BRANCH must be properly set to the Horreum branch you want to fetch the openapi
         run: make generate
