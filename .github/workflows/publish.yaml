@@ -40,8 +40,9 @@ jobs:
         run: |
           PROJECT_VERSION=$(poetry version | cut -d' ' -f2)
           GIT_TAG=$(git describe --tags --match="v*")
-          if [[ "${GIT_TAG:1}" =~ $PROJECT_VERSION ]]; then
-            echo "::error title='$GIT_TAG tag does not match project version'::"
+          GIT_TAG=${GIT_TAG:1}
+          if [[ "${GIT_TAG}" != $PROJECT_VERSION ]]; then
+            echo "::error title='$GIT_TAG tag does not match project version $PROJECT_VERSION'::"
             exit 1
           fi
       - name: Generate horreum client
