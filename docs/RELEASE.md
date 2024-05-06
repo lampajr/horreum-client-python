@@ -5,73 +5,93 @@ This document aims to describe how to perform a release of the Horreum python li
 The versioning pattern should follow the [Horreum](https://github.com/Hyperfoil/Horreum) 
 versioning scheme to keep coherence among all Horreum-related projects versions.
 
+## Prerequisites
+
+In order to perform the following release procedure correctly, certain prerequisites must be met:
+
+- Installed `git`.
+- Installed `poetry` python package, refer to the [doc](https://pypi.org/project/poetry/) for more details.
+- Installed `yq` linux tool, refer to its [doc](https://github.com/mikefarah/yq).
+- Enough privileges to push new branches in this repository.
+- Enough privileges to push new commit in the `main` branch (note this is temporary requirement, 
+in future direct pushes will be disallowed).
+
 ## Procedure
 
-### Tag a new version
+Note that releases (i.e., actual _git tags_) are performed from the corresponding _stable_ branch.
 
-Checkout to your branch, either a "stable" (e.g., `0.12.x`) or the `main` one.
+### Prepare the project for the next release cycle
 
-```bash
-git checkout origin/main
-```
-
-Update the project version:
+This procedure should be executed from the `main` branch, thus, checkout that branch. 
 
 ```bash
-poetry version patch
+git checkout main
 ```
 
-This will bump your version, from `0.12-dev` to `0.12`.
+Update the project for the next development cycle by running:
+
+```bash
+./scripts/next-dev-cycle.sh 
+```
+
+This will create the new _stable_ branch given the current development version.
+E.g., if the current version is `0.14.dev`, it will create `0.14.x` _stable_ branch.
+
+After that, it will update the current `main` branch by updating to the next development cycle.
+
+You should see a new commit like `Next is <VERSION>` highlight the next release cycle.
+This commit adds the newly created _stable_ branch to the CICD jobs, i.e., `ci.yaml` and `backport.yaml`.
 
 To double-check the version, run:
 ```bash
 poetry version
-# horreum 0.12
+# horreum 0.15.dev
 ```
 
-Commit the changes and tag a new version:
+All changes have been performed locally, you now need to push those changes remotely:
 ```bash
-git add .
-git commit -m "Tag version 0.12"
-git tag v0.12
-```
-
-Ensure the tag is in the form of `v$(poetry version)`.
-
-Push changes and tag:
-```bash
+# push main branch
 git push origin main
-git push origin v0.12
+
+# push newly created stable branch
+STABLE_BRANCH=...
+git push origin $STABLE_BRANCH
 ```
 
-If you are releasing a new patch from a _stable_ branch all previous operations must be performed
-from _stable_ rather than from `main`.
+### Tag a new version
 
-### Create stable branch
-
-> **NOTE**: If the _stable_ branch already exists, simply skip this step, as this means the following steps have already been done.
-
-To create a _stable_ branch from the `main` one, e.g., `0.12.x`, run the following commands.
+Checkout the _stable_ branch from which you want to tag a new release. 
 
 ```bash
-git checkout origin/main -b 0.12.x
-git checkout origin/main
+STABLE_BRANCH=...
+git checkout $STABLE_BRANCH
 ```
 
-Update version to the next development one:
+Update the version and create a git tag by running:
 ```bash
-poetry version 0.13-dev
+./scripts/update-version.sh -t -u
 ```
 
-Commit the changes:
+Where:
+* `-t`, ensure the script creates a new tag.
+* `-u`, update the HORREUM_BRANCH in the makefile.
+* The scripts will output the new version, prefix it with `v` to obtain the tag.
+
+Update to the next development version by running:
 ```bash
-git add .
-git commit -m "Next is 0.13"
+./scripts/update-version.sh -d
 ```
+Where:
+* `-d`, marks the version as development one.
+* The scripts will output the new version.
 
-Push changes:
+Commit and push changes:
+
 ```bash
-git push origin 0.12.x
-git push origin main
-```
+git commit -am "Next is <NEXT_DEV_VERSION>"
 
+git push origin $STABLE_BRANCH
+
+LATEST_TAG=...
+git push origin $LATEST_TAG
+```
