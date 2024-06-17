@@ -16,7 +16,7 @@ from horreum.raw_client.models.test import Test
 DEFAULT_CONNECTION_TIMEOUT: int = 30
 DEFAULT_REQUEST_TIMEOUT: int = 100
 
-USERNAME = "user"
+USERNAME = "horreum.bootstrap"
 PASSWORD = "secret"
 
 
